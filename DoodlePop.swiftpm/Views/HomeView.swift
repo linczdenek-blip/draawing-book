@@ -7,7 +7,19 @@ import SwiftData
 struct HomeView: View {
     let navigate: (AppRoute) -> Void
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \Drawing.updatedAt, order: .reverse) private var drawings: [Drawing]
+    @Query(sort: \Drawing.updatedAt, order: .reverse) private var allDrawings: [Drawing]
+    @Query(sort: \Profile.createdAt) private var profiles: [Profile]
+    @AppStorage("currentProfileID") private var currentProfileID: String = ""
+    @State private var showProfiles = false
+
+    private var currentProfile: Profile? {
+        profiles.first { $0.id.uuidString == currentProfileID } ?? profiles.first
+    }
+
+    /// Current kid's drawings (legacy drawings without a profile stay visible).
+    private var drawings: [Drawing] {
+        allDrawings.filter { $0.profileID == nil || $0.profileID == currentProfile?.id }
+    }
 
     var body: some View {
         ZStack {
@@ -24,6 +36,14 @@ struct HomeView: View {
             }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showProfiles) {
+            ProfileSheet(profiles: profiles, currentProfileID: $currentProfileID)
+        }
+        .onAppear {
+            if let p = currentProfile, currentProfileID.isEmpty {
+                currentProfileID = p.id.uuidString
+            }
+        }
     }
 
     // MARK: Header
@@ -31,7 +51,8 @@ struct HomeView: View {
     private var header: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Hi, friend! 👋").font(Theme.Fonts.caveat(48))
+                Text("Hi, \(currentProfile?.name ?? "friend")! 👋")
+                    .font(Theme.Fonts.caveat(48))
                 Squiggle(width: 210)
                 Text("Pick something to color today")
                     .font(Theme.Fonts.hand(20)).foregroundStyle(Theme.Palette.muted)
@@ -42,16 +63,20 @@ struct HomeView: View {
     }
 
     private var avatarChip: some View {
-        VStack(spacing: 4) {
-            Circle()
-                .fill(Theme.Palette.accentPeach)
-                .frame(width: 56, height: 56)
-                .overlay(Circle().stroke(Theme.Palette.ink, lineWidth: 2))
-                .overlay(Text("🙂").font(.system(size: 28)))
-                .hardShadow()
-            Text("kiddo · 5").font(Theme.Fonts.hand(14))
-                .foregroundStyle(Theme.Palette.muted)
+        Button { showProfiles = true } label: {
+            VStack(spacing: 4) {
+                Circle()
+                    .fill(Theme.Palette.accentPeach)
+                    .frame(width: 56, height: 56)
+                    .overlay(Circle().stroke(Theme.Palette.ink, lineWidth: 2))
+                    .overlay(Text(currentProfile?.emoji ?? "🙂").font(.system(size: 28)))
+                    .hardShadow()
+                Text(currentProfile.map { "\($0.name) · \($0.age)" } ?? "tap me")
+                    .font(Theme.Fonts.hand(14))
+                    .foregroundStyle(Theme.Palette.muted)
+            }
         }
+        .buttonStyle(.plain)
     }
 
     // MARK: Two big start actions

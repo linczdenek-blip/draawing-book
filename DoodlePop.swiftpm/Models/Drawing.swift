@@ -18,6 +18,10 @@ final class Drawing {
     @Attribute(.externalStorage) var photoTemplatePNG: Data?
     /// Composite PNG thumbnail (white + fills + template + strokes).
     @Attribute(.externalStorage) var thumbnailPNG: Data?
+    /// JSON-encoded [PlacedSticker].
+    @Attribute(.externalStorage) var stickersJSON: Data?
+    /// Kid profile this drawing belongs to.
+    var profileID: UUID?
     var inProgress: Bool
 
     init(title: String = "Untitled",
@@ -26,6 +30,8 @@ final class Drawing {
          fillPNG: Data? = nil,
          photoTemplatePNG: Data? = nil,
          thumbnailPNG: Data? = nil,
+         stickersJSON: Data? = nil,
+         profileID: UUID? = nil,
          inProgress: Bool = true) {
         self.id = UUID()
         self.title = title
@@ -36,6 +42,8 @@ final class Drawing {
         self.fillPNG = fillPNG
         self.photoTemplatePNG = photoTemplatePNG
         self.thumbnailPNG = thumbnailPNG
+        self.stickersJSON = stickersJSON
+        self.profileID = profileID
         self.inProgress = inProgress
     }
 }

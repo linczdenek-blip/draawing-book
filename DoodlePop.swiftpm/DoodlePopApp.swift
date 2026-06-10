@@ -8,6 +8,6 @@ struct DoodlePopApp: App {
             RootView()
                 .preferredColorScheme(.light)
         }
-        .modelContainer(for: [Drawing.self])
+        .modelContainer(for: [Drawing.self, Profile.self])
     }
 }

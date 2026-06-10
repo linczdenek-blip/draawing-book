@@ -273,5 +273,117 @@ private func drawGlyph(kind: TemplateGlyph,
                 p.addRect(CGRect(x: cx+sign*u(15)-u(3), y: cy+u(28), width: u(6), height: u(12)))
             }
         }
+
+    case .flower:
+        for i in 0..<6 {
+            let ang = CGFloat(i) * .pi / 3
+            let px = cx + cos(ang) * u(20)
+            let py = cy - u(10) + sin(ang) * u(20)
+            stroked({ p in
+                p.addEllipse(in: CGRect(x: px - u(11), y: py - u(11),
+                                        width: u(22), height: u(22)))
+            }, fill: partial ? Theme.Palette.accentPurple : nil)
+        }
+        stroked({ p in
+            p.addEllipse(in: CGRect(x: cx - u(10), y: cy - u(20),
+                                    width: u(20), height: u(20)))
+        }, fill: partial ? Theme.Palette.accentYellow : nil)
+        stroked { p in
+            p.move(to: CGPoint(x: cx, y: cy + u(10)))
+            p.addLine(to: CGPoint(x: cx, y: cy + u(42)))
+        }
+        stroked({ p in
+            p.move(to: CGPoint(x: cx, y: cy + u(28)))
+            p.addQuadCurve(to: CGPoint(x: cx + u(18), y: cy + u(22)),
+                           control: CGPoint(x: cx + u(12), y: cy + u(32)))
+            p.addQuadCurve(to: CGPoint(x: cx, y: cy + u(28)),
+                           control: CGPoint(x: cx + u(8), y: cy + u(20)))
+        }, fill: partial ? Theme.Palette.accentTeal : nil)
+
+    case .robot:
+        stroked({ p in
+            p.addRoundedRect(in: CGRect(x: cx - u(18), y: cy - u(42),
+                                        width: u(36), height: u(26)),
+                             cornerSize: CGSize(width: u(5), height: u(5)))
+        }, fill: partial ? Theme.Palette.accentBlue : nil)
+        stroked { p in
+            p.move(to: CGPoint(x: cx, y: cy - u(42)))
+            p.addLine(to: CGPoint(x: cx, y: cy - u(50)))
+        }
+        stroked({ p in
+            p.addEllipse(in: CGRect(x: cx - u(3), y: cy - u(56), width: u(6), height: u(6)))
+        }, fill: partial ? Theme.Palette.accentRed : nil)
+        for sign: CGFloat in [-1, 1] {
+            stroked({ p in
+                p.addEllipse(in: CGRect(x: cx + sign * u(9) - u(4), y: cy - u(34),
+                                        width: u(8), height: u(8)))
+            }, fill: partial ? Theme.Palette.accentYellow : nil)
+        }
+        stroked({ p in
+            p.addRoundedRect(in: CGRect(x: cx - u(24), y: cy - u(12),
+                                        width: u(48), height: u(36)),
+                             cornerSize: CGSize(width: u(6), height: u(6)))
+        }, fill: partial ? .white : nil)
+        for i in 0..<2 {
+            stroked({ p in
+                p.addEllipse(in: CGRect(x: cx - u(6) + CGFloat(i) * u(12) - u(4),
+                                        y: cy - u(2), width: u(8), height: u(8)))
+            }, fill: partial ? Theme.Palette.accentRed : nil)
+        }
+        for sign: CGFloat in [-1, 1] {
+            stroked { p in
+                p.move(to: CGPoint(x: cx + sign * u(24), y: cy - u(4)))
+                p.addLine(to: CGPoint(x: cx + sign * u(38), y: cy + u(6)))
+            }
+            stroked { p in
+                p.addRect(CGRect(x: cx + sign * u(12) - u(4), y: cy + u(24),
+                                 width: u(8), height: u(16)))
+            }
+        }
+
+    case .icecream:
+        stroked({ p in
+            p.move(to: CGPoint(x: cx - u(16), y: cy))
+            p.addLine(to: CGPoint(x: cx, y: cy + u(42)))
+            p.addLine(to: CGPoint(x: cx + u(16), y: cy))
+            p.closeSubpath()
+        }, fill: partial ? Theme.Palette.accentPeach : nil)
+        stroked { p in
+            p.move(to: CGPoint(x: cx - u(10), y: cy + u(12)))
+            p.addLine(to: CGPoint(x: cx + u(10), y: cy + u(12)))
+            p.move(to: CGPoint(x: cx - u(5), y: cy + u(26)))
+            p.addLine(to: CGPoint(x: cx + u(5), y: cy + u(26)))
+        }
+        stroked({ p in
+            p.addEllipse(in: CGRect(x: cx - u(18), y: cy - u(24), width: u(36), height: u(28)))
+        }, fill: partial ? Theme.Palette.accentRed : nil)
+        stroked({ p in
+            p.addEllipse(in: CGRect(x: cx - u(15), y: cy - u(44), width: u(30), height: u(24)))
+        }, fill: partial ? Theme.Palette.accentYellow : nil)
+        stroked({ p in
+            p.addEllipse(in: CGRect(x: cx - u(4), y: cy - u(52), width: u(8), height: u(8)))
+        }, fill: partial ? Theme.Palette.accentRed : nil)
+
+    case .star:
+        stroked({ p in
+            for i in 0..<10 {
+                let r: CGFloat = i % 2 == 0 ? 40 : 17
+                let ang = CGFloat(i) * .pi / 5 - .pi / 2
+                let pt = CGPoint(x: cx + cos(ang) * u(r), y: cy + sin(ang) * u(r))
+                if i == 0 { p.move(to: pt) } else { p.addLine(to: pt) }
+            }
+            p.closeSubpath()
+        }, fill: partial ? Theme.Palette.accentYellow : nil)
+        for sign: CGFloat in [-1, 1] {
+            stroked({ p in
+                p.addEllipse(in: CGRect(x: cx + sign * u(8) - u(3), y: cy - u(8),
+                                        width: u(6), height: u(6)))
+            }, fill: partial ? Theme.Palette.ink : nil)
+        }
+        stroked { p in
+            p.move(to: CGPoint(x: cx - u(8), y: cy + u(6)))
+            p.addQuadCurve(to: CGPoint(x: cx + u(8), y: cy + u(6)),
+                           control: CGPoint(x: cx, y: cy + u(14)))
+        }
     }
 }

@@ -3,6 +3,7 @@ import PhotosUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import UIKit
+import Vision
 
 /// Photo Magic — turn a photo into a black-and-white coloring page.
 /// Flow: pick photo → preview converted line-art → "Color it!" → Canvas.
@@ -132,12 +133,19 @@ struct PhotoMagicView: View {
     }
 }
 
-/// Photo → coloring page pipeline:
-/// 1) downscale, 2) bilateral-ish smoothing (CIMedian), 3) edges (CIEdges),
-/// 4) invert + threshold for clean black lines on white.
+/// Photo → coloring page pipeline (runs entirely on device):
+/// 0) Vision person segmentation — if a person is found, the background is
+///    whited out so the coloring page is just them, no clutter,
+/// 1) downscale, 2) smoothing (CIMedian), 3) edges (CIEdges),
+/// 4) invert + 5) threshold for clean black lines on white.
 enum ColoringPageMaker {
     static func convert(_ image: UIImage) -> UIImage? {
-        guard let ci = CIImage(image: image) else { return nil }
+        guard var ci = CIImage(image: image) else { return nil }
+
+        // 0) Drop the background when there's clearly a person in the photo.
+        if let masked = personMasked(ci) {
+            ci = masked
+        }
 
         // 1) Downscale to keep edges chunky and kid-friendly.
         let target: CGFloat = 1200
@@ -171,5 +179,36 @@ enum ColoringPageMaker {
         let context = CIContext()
         guard let cg = context.createCGImage(thresholded, from: thresholded.extent) else { return nil }
         return UIImage(cgImage: cg)
+    }
+
+    /// Person on white background, or nil when no person is detected
+    /// (pets, toys and landscapes keep the full frame).
+    private static func personMasked(_ input: CIImage) -> CIImage? {
+        let request = VNGeneratePersonSegmentationRequest()
+        request.qualityLevel = .balanced
+        request.outputPixelFormat = kCVPixelFormatType_OneComponent8
+
+        let handler = VNImageRequestHandler(ciImage: input)
+        guard (try? handler.perform([request])) != nil,
+              let buffer = request.results?.first?.pixelBuffer else { return nil }
+
+        var mask = CIImage(cvPixelBuffer: buffer)
+        let sx = input.extent.width / mask.extent.width
+        let sy = input.extent.height / mask.extent.height
+        mask = mask.transformed(by: CGAffineTransform(scaleX: sx, y: sy))
+
+        // Reject empty masks (no person) — average brightness ≈ person coverage.
+        let avg = mask.applyingFilter("CIAreaAverage",
+                                      parameters: [kCIInputExtentKey: CIVector(cgRect: mask.extent)])
+        var pixel = [UInt8](repeating: 0, count: 4)
+        CIContext().render(avg, toBitmap: &pixel, rowBytes: 4,
+                           bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
+                           format: .RGBA8, colorSpace: nil)
+        guard pixel[0] > 8 else { return nil }   // < ~3% person pixels → skip
+
+        let white = CIImage(color: .white).cropped(to: input.extent)
+        return input.applyingFilter("CIBlendWithMask",
+                                    parameters: [kCIInputBackgroundImageKey: white,
+                                                 kCIInputMaskImageKey: mask])
     }
 }

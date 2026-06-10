@@ -21,6 +21,7 @@ struct Template: Identifiable, Hashable {
 
 enum TemplateGlyph: String {
     case cat, dog, dino, rocket, cake, unicorn, butterfly, house, fish, tree, car, sun
+    case flower, robot, icecream, star
 }
 
 enum TemplateLibrary {
@@ -40,6 +41,11 @@ enum TemplateLibrary {
         .init(id: "house",     title: "My House",     category: .nature,   difficulty: .easy,   glyph: .house),
         .init(id: "tree",      title: "Big Tree",     category: .nature,   difficulty: .easy,   glyph: .tree),
         .init(id: "sun",       title: "Sunny Day",    category: .nature,   difficulty: .easy,   glyph: .sun),
+        .init(id: "flower",    title: "Daisy",        category: .nature,   difficulty: .easy,   glyph: .flower),
+
+        .init(id: "robot",     title: "Beep Bot",     category: .magic,    difficulty: .tricky, glyph: .robot),
+        .init(id: "icecream",  title: "Ice Cream",    category: .magic,    difficulty: .easy,   glyph: .icecream),
+        .init(id: "star",      title: "Shiny Star",   category: .magic,    difficulty: .easy,   glyph: .star),
     ]
 
     static func shelves() -> [(Template.Category, [Template])] {

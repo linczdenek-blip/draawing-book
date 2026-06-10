@@ -112,13 +112,29 @@ DoodlePop.swiftpm/
       GlyphView.swift        # hand-drawn line-art glyphs (cat, dog, dino, …)
 ```
 
-## What's stubbed for later
+## Features
 
-- **Flood fill (paint bucket)**: currently maps to a thick pen. Replace with a
-  Metal-backed raster floodfill.
-- **Stickers / glitter**: tool icons exist; tap-to-insert is not implemented.
-- **Mascot guide & coloring music**: not in MVP.
-- **Guided Access / parental lock**: deferred.
+- **Paint bucket flood fill** — tap a region to fill it; template lines and the
+  kid's own strokes act as walls. Default tool for the 2–4 age mode.
+- **Rainbow brush** — each stroke comes out in the next rainbow color.
+- **Stickers** — emoji stamp tray; tap the page to stick.
+- **Celebration** — confetti + haptics when a drawing is finished.
+- **Photo magic** — system photo picker → on-device Vision person segmentation
+  (background drops out) → Core Image edge detection → coloring page.
+- **16 templates** in 4 categories with Easy/Tricky filtering.
+- **Zoom 2× + pan** (hand tool) for detail work.
+- **Share & print** via the system share sheet, protected by a parental gate
+  (multiplication question).
+- **Kid profiles** — name/age/avatar, each kid sees their own drawings.
+- **Private by design** — no network, no accounts, no analytics; see
+  [PRIVACY.md](PRIVACY.md).
+
+## What's still ahead
+
+- Mascot guide & coloring music (in the design chat, not in MVP).
+- Glitter particle brush (rainbow brush stands in for now).
+- Redo for fills/stickers (undo works; redo covers strokes only).
+- Bundled Caveat/Patrick Hand fonts (system font fallback today).
 
 ## Troubleshooting
 
