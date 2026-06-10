@@ -8,25 +8,33 @@ final class Drawing {
     var title: String
     var createdAt: Date
     var updatedAt: Date
-    /// PNG of the drawing strokes only.
-    @Attribute(.externalStorage) var strokesPNG: Data?
-    /// PNG of the source template (line-art) under the strokes, if any.
-    @Attribute(.externalStorage) var templatePNG: Data?
-    /// PNG thumbnail used in tiles and shelves.
+    /// Template the drawing started from, if any (key into TemplateLibrary).
+    var templateID: String?
+    /// PencilKit drawing data — keeps strokes editable on re-open.
+    @Attribute(.externalStorage) var strokesData: Data?
+    /// PNG of the raster flood-fill layer beneath the strokes.
+    @Attribute(.externalStorage) var fillPNG: Data?
+    /// PNG of a photo-magic line-art template, if the drawing came from a photo.
+    @Attribute(.externalStorage) var photoTemplatePNG: Data?
+    /// Composite PNG thumbnail (white + fills + template + strokes).
     @Attribute(.externalStorage) var thumbnailPNG: Data?
     var inProgress: Bool
 
     init(title: String = "Untitled",
-         strokesPNG: Data? = nil,
-         templatePNG: Data? = nil,
+         templateID: String? = nil,
+         strokesData: Data? = nil,
+         fillPNG: Data? = nil,
+         photoTemplatePNG: Data? = nil,
          thumbnailPNG: Data? = nil,
          inProgress: Bool = true) {
         self.id = UUID()
         self.title = title
         self.createdAt = .now
         self.updatedAt = .now
-        self.strokesPNG = strokesPNG
-        self.templatePNG = templatePNG
+        self.templateID = templateID
+        self.strokesData = strokesData
+        self.fillPNG = fillPNG
+        self.photoTemplatePNG = photoTemplatePNG
         self.thumbnailPNG = thumbnailPNG
         self.inProgress = inProgress
     }

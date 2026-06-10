@@ -20,7 +20,7 @@ struct TemplatesView: View {
                             HStack(spacing: 18) {
                                 ForEach(drawings.prefix(8)) { d in
                                     MyDrawingCard(drawing: d) {
-                                        navigate(.canvas(templateID: nil, drawingID: d.id))
+                                        navigate(.canvas(templateID: nil, drawingID: d.id, photoPNG: nil))
                                     }
                                 }
                             }
@@ -31,7 +31,7 @@ struct TemplatesView: View {
                             HStack(spacing: 18) {
                                 ForEach(filtered(items)) { t in
                                     TemplateCard(template: t) {
-                                        navigate(.canvas(templateID: t.id, drawingID: nil))
+                                        navigate(.canvas(templateID: t.id, drawingID: nil, photoPNG: nil))
                                     }
                                 }
                             }

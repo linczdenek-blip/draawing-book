@@ -99,9 +99,10 @@ struct PhotoMagicView: View {
                     convert()
                 }
             }
-            if convertedImage != nil {
+            if let converted = convertedImage {
                 SketchyPill(label: "Color it! 🎨", fill: Theme.Palette.accentTeal) {
-                    navigate(.canvas(templateID: nil, drawingID: nil))
+                    navigate(.canvas(templateID: nil, drawingID: nil,
+                                     photoPNG: converted.pngData()))
                 }
             }
             Spacer()
@@ -162,8 +163,13 @@ enum ColoringPageMaker {
                                          kCIInputContrastKey: 1.6,
                                          kCIInputBrightnessKey: 0.05])
 
+        // 5) Hard threshold → pure black lines on pure white, so the canvas
+        //    can blend the page with .multiply and flood fill sees clean walls.
+        let thresholded = inverted.applyingFilter("CIColorThreshold",
+                                                  parameters: ["inputThreshold": 0.6])
+
         let context = CIContext()
-        guard let cg = context.createCGImage(inverted, from: inverted.extent) else { return nil }
+        guard let cg = context.createCGImage(thresholded, from: thresholded.extent) else { return nil }
         return UIImage(cgImage: cg)
     }
 }

@@ -67,7 +67,7 @@ struct HomeView: View {
             ) {
                 IconBadge(systemName: "paintpalette.fill", tint: Theme.Palette.accentRed)
             } action: {
-                navigate(.canvas(templateID: nil, drawingID: nil))
+                navigate(.canvas(templateID: nil, drawingID: nil, photoPNG: nil))
             }
 
             BigStartTile(
@@ -108,9 +108,9 @@ struct HomeView: View {
             ForEach(Array(cells.enumerated()), id: \.offset) { _, drawing in
                 DrawingTile(drawing: drawing) {
                     if let d = drawing {
-                        navigate(.canvas(templateID: nil, drawingID: d.id))
+                        navigate(.canvas(templateID: nil, drawingID: d.id, photoPNG: nil))
                     } else {
-                        navigate(.canvas(templateID: nil, drawingID: nil))
+                        navigate(.canvas(templateID: nil, drawingID: nil, photoPNG: nil))
                     }
                 }
             }
